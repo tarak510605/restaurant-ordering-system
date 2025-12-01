@@ -18,6 +18,20 @@ export async function GET(request: NextRequest) {
       .sort({ isDefault: -1, createdAt: -1 })
       .lean();
 
+    // If user has no payment methods, return a virtual default "Cash on Delivery"
+    if (!paymentMethods || paymentMethods.length === 0) {
+      const defaultCod = {
+        _id: 'default-cod',
+        user: user.id,
+        type: 'Cash on Delivery',
+        isDefault: true,
+        isActive: true,
+        // createdAt/updatedAt are omitted intentionally for virtual item
+      };
+
+      return successResponse([defaultCod]);
+    }
+
     return successResponse(paymentMethods);
   } catch (error) {
     return handleApiError(error);

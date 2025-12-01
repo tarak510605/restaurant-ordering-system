@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: 'Order food from your favorite restaurants',
 };
 
+// Force dynamic rendering for all pages (disable static optimization)
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: {

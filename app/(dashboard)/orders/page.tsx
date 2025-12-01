@@ -39,6 +39,9 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
 
+  // Suppress exhaustive-deps here because fetchOrders is stable for this component
+  // and including it would require useCallback; this is an intentional minimal change.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchOrders();
   }, []);

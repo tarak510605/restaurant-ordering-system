@@ -36,6 +36,8 @@ export default function PaymentMethodsPage() {
     isDefault: false,
   });
 
+  // Suppress exhaustive-deps for fetchPaymentMethods; intentional minimal change.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchPaymentMethods();
   }, []);

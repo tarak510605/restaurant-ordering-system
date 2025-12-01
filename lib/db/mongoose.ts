@@ -1,14 +1,20 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
+
+// Only load dotenv in development (production uses platform env vars)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: '.env.local' });
+}
 
 // Ensure all mongoose models are registered
 import '../models';
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+// Only validate MONGODB_URI at runtime, not during build
+if (!MONGODB_URI && typeof window === 'undefined' && process.env.NODE_ENV !== 'test') {
+  // Allow build to proceed; validation happens when connectDB is called
+  console.warn('⚠️ MONGODB_URI not set. Database connection will fail at runtime.');
 }
 
 interface MongooseCache {
@@ -29,6 +35,10 @@ if (!global.mongoose) {
 async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) {
     return cached.conn;
+  }
+
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable');
   }
 
   if (!cached.promise) {
